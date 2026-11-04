@@ -1,0 +1,4477 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SecurePath Attendance API",
+    "version": "1.0.0",
+    "description": "Versioned administration and mobile integration API. Every protected operation uses a Sanctum bearer token; x-permission names the dashboard permission or role required."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Local development"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication"
+    },
+    {
+      "name": "Profile"
+    },
+    {
+      "name": "Dashboard"
+    },
+    {
+      "name": "People"
+    },
+    {
+      "name": "Departments"
+    },
+    {
+      "name": "Schedules"
+    },
+    {
+      "name": "Attendance"
+    },
+    {
+      "name": "Leave"
+    },
+    {
+      "name": "Biometrics"
+    },
+    {
+      "name": "Recognition"
+    },
+    {
+      "name": "Reports"
+    },
+    {
+      "name": "Payroll"
+    },
+    {
+      "name": "Pay rates"
+    },
+    {
+      "name": "Alerts"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Admins"
+    },
+    {
+      "name": "Audit"
+    },
+    {
+      "name": "Settings"
+    },
+    {
+      "name": "Notifications"
+    },
+    {
+      "name": "Mobile"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Sign in and issue a Sanctum token",
+        "security": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Login"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Revoke the current token",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Return the authenticated user, role, and permissions",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Change password and revoke other tokens",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PasswordChange"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Send a password reset link",
+        "security": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ForgotPassword"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Complete password reset",
+        "security": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ResetPassword"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get current profile",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update current profile",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Profile"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update profile using multipart form data",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Profile"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/profile/change-password": {
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Change current profile password",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PasswordChange"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get consolidated dashboard cards and charts",
+        "x-permission": "dashboard.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/dashboard/summary": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get optimized dashboard summary",
+        "x-permission": "dashboard.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/dashboard/attendance-trend": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get seven-day attendance trend",
+        "x-permission": "dashboard.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/dashboard/attendance-by-department": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get attendance statistics by department",
+        "x-permission": "dashboard.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/dashboard/recent-activity": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get recent recognition activity",
+        "x-permission": "dashboard.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/people": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Search and paginate people",
+        "x-permission": "people.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/DepartmentId"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "faceRegistered",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Create a person",
+        "x-permission": "people.create",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Person"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/people/import": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Import validated people CSV",
+        "x-permission": "people.import",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "updateExisting": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/people/export": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Stream people CSV",
+        "x-permission": "people.export",
+        "responses": {
+          "200": {
+            "description": "CSV file",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/people/{person}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/PersonCode"
+        }
+      ],
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Get a person",
+        "x-permission": "people.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Replace editable person fields",
+        "x-permission": "people.edit",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Person"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Patch editable person fields",
+        "x-permission": "people.edit",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Person"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Soft-delete a person",
+        "x-permission": "people.delete",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/people/{person}/status": {
+      "patch": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Activate, deactivate, or suspend a person",
+        "x-permission": "people.edit",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Status"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/people/{person}/profile": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Get bounded person profile summary",
+        "x-permission": "people.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/people/{person}/attendance": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Paginate a person's attendance history",
+        "x-permission": "people.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/people/{person}/avatar": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Stream private person avatar",
+        "x-permission": "people.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image stream"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/people/{person}/biometric-status": {
+      "get": {
+        "tags": [
+          "Biometrics"
+        ],
+        "summary": "Get enrollment status without biometric material",
+        "x-permission": "biometrics.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/people/{person}/biometric-consent": {
+      "get": {
+        "tags": [
+          "Biometrics"
+        ],
+        "summary": "Get biometric consent",
+        "x-permission": "biometrics.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Biometrics"
+        ],
+        "summary": "Grant or revoke biometric consent",
+        "x-permission": "biometrics.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "granted"
+                ],
+                "properties": {
+                  "granted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/people/{person}/biometric-enrollment": {
+      "post": {
+        "tags": ["Biometrics"],
+        "summary": "Capture a supervised three-pose face enrollment",
+        "description": "Stores samples on the private biometric disk and calls the configured Python face AI service. If the AI service is not configured, the enrollment remains pending and is not marked enrolled.",
+        "x-permission": "biometrics.enroll",
+        "parameters": [{"$ref": "#/components/parameters/PersonCode"}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["front", "left", "right"],
+                "properties": {
+                  "front": {"type": "string", "format": "binary", "description": "Front-facing JPEG or WebP, maximum 5 MB"},
+                  "left": {"type": "string", "format": "binary", "description": "Slight-left JPEG or WebP, maximum 5 MB"},
+                  "right": {"type": "string", "format": "binary", "description": "Slight-right JPEG or WebP, maximum 5 MB"},
+                  "consentAccepted": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"$ref": "#/components/responses/Created"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "409": {"$ref": "#/components/responses/Conflict"},
+          "422": {"$ref": "#/components/responses/Validation"},
+          "503": {"description": "Configured face AI service is unavailable or rejected the enrollment"}
+        }
+      }
+    },
+    "/people/{person}/biometric-reenrollment": {
+      "post": {
+        "tags": ["Biometrics"],
+        "summary": "Replace an existing face enrollment after AI success",
+        "description": "Accepts the same multipart fields as biometric-enrollment. The old usable template remains active if replacement processing fails.",
+        "x-permission": "biometrics.reenroll",
+        "parameters": [{"$ref": "#/components/parameters/PersonCode"}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["front", "left", "right"],
+                "properties": {
+                  "front": {"type": "string", "format": "binary"},
+                  "left": {"type": "string", "format": "binary"},
+                  "right": {"type": "string", "format": "binary"},
+                  "consentAccepted": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"$ref": "#/components/responses/Created"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "409": {"$ref": "#/components/responses/Conflict"},
+          "422": {"$ref": "#/components/responses/Validation"},
+          "503": {"description": "Replacement processing failed; the old template remains active"}
+        }
+      }
+    },
+    "/people/{person}/biometric-data": {
+      "delete": {
+        "tags": [
+          "Biometrics"
+        ],
+        "summary": "Revoke and remove biometric data",
+        "x-permission": "biometrics.delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/people/{person}/enrollment-request": {
+      "post": {
+        "tags": [
+          "Biometrics"
+        ],
+        "summary": "Create a secure expiring enrollment request",
+        "x-permission": "biometrics.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/people/{person}/enrollment-status": {
+      "get": {
+        "tags": [
+          "Biometrics"
+        ],
+        "summary": "Get latest enrollment request state",
+        "x-permission": "biometrics.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PersonCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/departments": {
+      "get": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "List departments",
+        "x-permission": "departments.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Create department",
+        "x-permission": "departments.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Department"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/departments/{department}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/DepartmentCode"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Get department",
+        "x-permission": "departments.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Update department",
+        "x-permission": "departments.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Department"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Soft-delete department",
+        "x-permission": "departments.manage",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          }
+        }
+      }
+    },
+    "/departments/{department}/members": {
+      "get": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Paginate department members",
+        "x-permission": "departments.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DepartmentCode"
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/departments/{department}/statistics": {
+      "get": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Get department attendance statistics",
+        "x-permission": "departments.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DepartmentCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/schedules": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "List schedules and assignments",
+        "x-permission": "schedules.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Create and assign schedule",
+        "x-permission": "schedules.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Schedule"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/schedules/{schedule}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ScheduleCode"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Get schedule",
+        "x-permission": "schedules.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Update schedule and assignments",
+        "x-permission": "schedules.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Schedule"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Delete schedule",
+        "x-permission": "schedules.manage",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          }
+        }
+      }
+    },
+    "/holidays": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "List holidays",
+        "x-permission": "schedules.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Create holiday",
+        "x-permission": "schedules.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Holiday"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/holidays/{holiday}": {
+      "parameters": [
+        {
+          "name": "holiday",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Update holiday",
+        "x-permission": "schedules.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Holiday"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Delete holiday",
+        "x-permission": "schedules.manage",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          }
+        }
+      }
+    },
+    "/attendance": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Filter and paginate attendance",
+        "x-permission": "attendance.view or myAttendance.view (self only)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/Date"
+          },
+          {
+            "$ref": "#/components/parameters/DateFrom"
+          },
+          {
+            "$ref": "#/components/parameters/DateTo"
+          },
+          {
+            "$ref": "#/components/parameters/PersonId"
+          },
+          {
+            "$ref": "#/components/parameters/DepartmentId"
+          },
+          {
+            "$ref": "#/components/parameters/Location"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Create manual attendance",
+        "x-permission": "attendance.create",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Attendance"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/attendance/manual": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Create explicitly manual attendance",
+        "x-permission": "attendance.create",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Attendance"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/attendance/{attendance}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/AttendanceCode"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Get attendance detail",
+        "x-permission": "attendance.view or myAttendance.view (self only)",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Edit through correction history",
+        "x-permission": "attendance.edit",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AttendanceUpdate"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Soft-delete attendance",
+        "x-permission": "attendance.delete",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          }
+        }
+      }
+    },
+    "/attendance/{attendance}/corrections": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Request an attendance correction",
+        "x-permission": "attendance.edit or myAttendance.view (self only)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AttendanceCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Correction"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/attendance-corrections": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "List correction requests",
+        "x-permission": "attendance.approve",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/attendance-corrections/{attendanceCorrection}": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Get correction request",
+        "x-permission": "attendance.approve",
+        "parameters": [
+          {
+            "name": "attendanceCorrection",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/attendance-corrections/{attendanceCorrection}/approve": {
+      "patch": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Approve and transactionally apply correction",
+        "x-permission": "attendance.approve",
+        "parameters": [
+          {
+            "name": "attendanceCorrection",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/attendance-corrections/{attendanceCorrection}/reject": {
+      "patch": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Reject correction",
+        "x-permission": "attendance.approve",
+        "parameters": [
+          {
+            "name": "attendanceCorrection",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/leave-requests": {
+      "get": {
+        "tags": [
+          "Leave"
+        ],
+        "summary": "List leave requests",
+        "x-permission": "attendance.view or myAttendance.view (self only)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          },
+          {
+            "$ref": "#/components/parameters/PersonId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Leave"
+        ],
+        "summary": "Submit leave request",
+        "x-permission": "attendance.create or myAttendance.view (self only)",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Leave"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/leave-requests/{leaveRequest}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/LeaveCode"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Leave"
+        ],
+        "summary": "Get leave request",
+        "x-permission": "attendance.view or myAttendance.view (self only)",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Leave"
+        ],
+        "summary": "Cancel pending leave",
+        "x-permission": "attendance.edit or myAttendance.view (self only)",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/leave-requests/{leaveRequest}/approve": {
+      "patch": {
+        "tags": [
+          "Leave"
+        ],
+        "summary": "Approve leave and create attendance states",
+        "x-permission": "attendance.approve",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LeaveCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/leave-requests/{leaveRequest}/reject": {
+      "patch": {
+        "tags": [
+          "Leave"
+        ],
+        "summary": "Reject leave",
+        "x-permission": "attendance.approve",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LeaveCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/recognition-events": {
+      "get": {
+        "tags": [
+          "Recognition"
+        ],
+        "summary": "Filter and paginate recognition history",
+        "x-permission": "biometrics.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/DateFrom"
+          },
+          {
+            "$ref": "#/components/parameters/DateTo"
+          },
+          {
+            "$ref": "#/components/parameters/PersonId"
+          },
+          {
+            "name": "recognitionStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "verificationStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minConfidence",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/recognition-events/{recognitionEvent}": {
+      "get": {
+        "tags": [
+          "Recognition"
+        ],
+        "summary": "Get recognition event",
+        "x-permission": "biometrics.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RecognitionCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/recognition-events/{recognitionEvent}/verify": {
+      "post": {
+        "tags": [
+          "Recognition"
+        ],
+        "summary": "Verify recognition and apply attendance",
+        "x-permission": "biometrics.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RecognitionCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/recognition-events/{recognitionEvent}/reject": {
+      "post": {
+        "tags": [
+          "Recognition"
+        ],
+        "summary": "Reject recognition",
+        "x-permission": "biometrics.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RecognitionCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/recognition-events/{recognitionEvent}/assign-person": {
+      "post": {
+        "tags": [
+          "Recognition"
+        ],
+        "summary": "Assign an unknown event to a person",
+        "x-permission": "biometrics.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RecognitionCode"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "personId"
+                ],
+                "properties": {
+                  "personId": {
+                    "type": "string",
+                    "example": "EMP-00015"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/reports/{type}": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Generate report data",
+        "x-permission": "reports.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ReportType"
+          },
+          {
+            "$ref": "#/components/parameters/DateFrom"
+          },
+          {
+            "$ref": "#/components/parameters/DateTo"
+          },
+          {
+            "$ref": "#/components/parameters/PersonId"
+          },
+          {
+            "$ref": "#/components/parameters/DepartmentId"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/reports/{type}/export": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Stream report CSV",
+        "x-permission": "reports.export",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ReportType"
+          },
+          {
+            "$ref": "#/components/parameters/DateFrom"
+          },
+          {
+            "$ref": "#/components/parameters/DateTo"
+          },
+          {
+            "$ref": "#/components/parameters/PersonId"
+          },
+          {
+            "$ref": "#/components/parameters/DepartmentId"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/alerts": {
+      "get": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "List alerts",
+        "x-permission": "alerts.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "info",
+                "warning",
+                "high",
+                "critical"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/alerts/{alert}": {
+      "get": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Get alert",
+        "x-permission": "alerts.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AlertCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/alerts/{alert}/status": {
+      "patch": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Update or assign alert",
+        "x-permission": "alerts.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AlertCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Status"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/alerts/{alert}/resolve": {
+      "post": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Resolve alert",
+        "x-permission": "alerts.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AlertCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/alerts/{alert}/notes": {
+      "post": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Append auditable alert note",
+        "x-permission": "alerts.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AlertCode"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Review"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List regular user accounts",
+        "x-permission": "users.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create regular user",
+        "x-permission": "users.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/User"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/users/{user}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/UserId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get regular user",
+        "x-permission": "users.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update regular user",
+        "x-permission": "users.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/User"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Soft-delete regular user",
+        "x-permission": "users.manage",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          }
+        }
+      }
+    },
+    "/users/{user}/status": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update regular user status and revoke tokens",
+        "x-permission": "users.manage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Status"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/users/{user}/avatar": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Stream private user avatar",
+        "x-permission": "owner or users.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image stream"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/admins": {
+      "get": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "List Super Admin and Admin accounts",
+        "x-permission": "role:super_admin",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Create Admin with exact permissions",
+        "x-permission": "role:super_admin",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Admin"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/admins/{admin}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/AdminId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Get Admin",
+        "x-permission": "role:super_admin",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Update Admin without role promotion",
+        "x-permission": "role:super_admin",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AdminUpdate"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Soft-delete Admin; Super Admin is protected",
+        "x-permission": "role:super_admin",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/admins/{admin}/status": {
+      "patch": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Enable or disable Admin",
+        "x-permission": "role:super_admin",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AdminId"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Status"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/admins/{admin}/permissions": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/AdminId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Get assigned Admin permissions",
+        "x-permission": "role:super_admin",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Replace assigned Admin permissions transactionally",
+        "x-permission": "role:super_admin",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Permissions"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/admins/{admin}/reset-password": {
+      "post": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Reset Admin password and revoke tokens",
+        "x-permission": "role:super_admin",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AdminId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/permissions": {
+      "get": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Get grouped permission catalog",
+        "x-permission": "role:super_admin",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/audit-logs": {
+      "get": {
+        "tags": [
+          "Audit"
+        ],
+        "summary": "Search append-only audit logs",
+        "x-permission": "auditLogs.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          },
+          {
+            "$ref": "#/components/parameters/Status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/audit-logs/{auditLog}": {
+      "get": {
+        "tags": [
+          "Audit"
+        ],
+        "summary": "Get audit log",
+        "x-permission": "auditLogs.view",
+        "parameters": [
+          {
+            "name": "auditLog",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get typed system settings",
+        "x-permission": "settings.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Update allowed settings transactionally",
+        "x-permission": "settings.manage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Settings"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "List current user's notifications",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/notifications/unread-count": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Get unread notification count",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/notifications/read-all": {
+      "patch": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Mark all notifications read",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/notifications/{notification}/read": {
+      "patch": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Mark owned notification read",
+        "parameters": [
+          {
+            "name": "notification",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/roles": {
+      "get": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "List employee roles",
+        "x-permission": "payRates.view, people.view, or payroll.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "Create an employee role",
+        "x-permission": "payRates.manage",
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/roles/{role}": {
+      "put": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "Update an employee role",
+        "x-permission": "payRates.manage",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "Delete an unused employee role",
+        "x-permission": "payRates.manage",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/pay-rates": {
+      "get": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "List historical department-role hourly rates",
+        "x-permission": "payRates.view",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roleId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "Create a non-overlapping historical pay rate",
+        "x-permission": "payRates.manage",
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/pay-rates/{payRate}": {
+      "put": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "Update a historical pay rate",
+        "x-permission": "payRates.manage",
+        "parameters": [
+          {
+            "name": "payRate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pay rates"
+        ],
+        "summary": "Delete a pay rate",
+        "x-permission": "payRates.manage",
+        "parameters": [
+          {
+            "name": "payRate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          }
+        }
+      }
+    },
+    "/payroll": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Get a payroll period overview and optimized summary",
+        "x-permission": "payroll.view",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/payroll/periods": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "List payroll periods",
+        "x-permission": "payroll.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/payroll/generate": {
+      "post": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Calculate or recalculate a monthly payroll period",
+        "x-permission": "payroll.manage",
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/payroll/entries/{payrollEntry}": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Get employee payroll detail and attendance breakdown",
+        "x-permission": "payroll.view",
+        "parameters": [
+          {
+            "name": "payrollEntry",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/payroll/periods/{payrollPeriod}": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Get a payroll period",
+        "x-permission": "payroll.view",
+        "parameters": [
+          {
+            "name": "payrollPeriod",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/payroll/periods/{payrollPeriod}/employees": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "List calculated employee payroll entries",
+        "x-permission": "payroll.view",
+        "parameters": [
+          {
+            "name": "payrollPeriod",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          }
+        }
+      }
+    },
+    "/payroll/periods/{payrollPeriod}/summary": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Get optimized payroll totals",
+        "x-permission": "payroll.view",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/payroll/periods/{payrollPeriod}/export": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Export payroll as CSV",
+        "x-permission": "payroll.export",
+        "responses": {
+          "200": {
+            "description": "CSV stream"
+          }
+        }
+      }
+    },
+    "/payroll/periods/{payrollPeriod}/approve": {
+      "post": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Approve a calculated payroll period",
+        "x-permission": "payroll.manage",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/payroll/periods/{payrollPeriod}/close": {
+      "post": {
+        "tags": [
+          "Payroll"
+        ],
+        "summary": "Close an approved payroll period",
+        "x-permission": "payroll.manage",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/mobile/auth/login": {
+      "post": {
+        "tags": [
+          "Mobile"
+        ],
+        "summary": "Authenticate dedicated kiosk device",
+        "security": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/DeviceLogin"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/mobile/me": {
+      "get": {
+        "tags": [
+          "Mobile"
+        ],
+        "summary": "Get personal-user or device identity",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          }
+        }
+      }
+    },
+    "/mobile/schedule": {
+      "get": {
+        "tags": [
+          "Mobile"
+        ],
+        "summary": "Get linked person's schedule",
+        "x-permission": "personal user token",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/mobile/attendance": {
+      "get": {
+        "tags": [
+          "Mobile"
+        ],
+        "summary": "Get linked person's attendance",
+        "x-permission": "personal user token",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Paginated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/mobile/recognition-events": {
+      "post": {
+        "tags": [
+          "Mobile"
+        ],
+        "summary": "Submit idempotent recognition result",
+        "x-permission": "Sanctum ability recognition:submit",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Recognition"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/mobile/enrollments/{token}": {
+      "get": {
+        "tags": [
+          "Mobile"
+        ],
+        "summary": "Resolve opaque enrollment token",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EnrollmentToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/mobile/enrollments/{token}/complete": {
+      "post": {
+        "tags": [
+          "Mobile"
+        ],
+        "summary": "Complete mobile enrollment with secure reference",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EnrollmentToken"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/EnrollmentComplete"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/attendance/manual-check-in": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Manually check in one employee",
+        "description": "Creates an open attendance record using server time by default, calculates schedule and late status, records the acting administrator, and rejects duplicate sessions.",
+        "x-permission": "attendance.manual_checkin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualCheckInRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Created"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    },
+    "/attendance/manual-check-out": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Manually check out one employee",
+        "description": "Closes the current open attendance record, calculates worked time, enforces the department overtime limit, and records the acting administrator.",
+        "x-permission": "attendance.manual_checkout",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualCheckOutRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Ok"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validation"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Sanctum"
+      }
+    },
+    "parameters": {
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        }
+      },
+      "Search": {
+        "name": "search",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      "Status": {
+        "name": "status",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Date": {
+        "name": "date",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "DateFrom": {
+        "name": "dateFrom",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "DateTo": {
+        "name": "dateTo",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "PersonId": {
+        "name": "personId",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "example": "EMP-00015"
+        }
+      },
+      "DepartmentId": {
+        "name": "departmentId",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "example": "DEP-ENG"
+        }
+      },
+      "Location": {
+        "name": "location",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "maxLength": 150,
+          "example": "Main Entrance"
+        }
+      },
+      "PersonCode": {
+        "name": "person",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "EMP-00015"
+        }
+      },
+      "DepartmentCode": {
+        "name": "department",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "DEP-ENG"
+        }
+      },
+      "ScheduleCode": {
+        "name": "schedule",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "SCH-001"
+        }
+      },
+      "AttendanceCode": {
+        "name": "attendance",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "EVT-000001"
+        }
+      },
+      "RecognitionCode": {
+        "name": "recognitionEvent",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "REC-000001"
+        }
+      },
+      "AlertCode": {
+        "name": "alert",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "ALT-000001"
+        }
+      },
+      "LeaveCode": {
+        "name": "leaveRequest",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "LR-000001"
+        }
+      },
+      "UserId": {
+        "name": "user",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string",
+              "example": "USR-002"
+            }
+          ]
+        }
+      },
+      "AdminId": {
+        "name": "admin",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string",
+              "example": "ADM-002"
+            }
+          ]
+        }
+      },
+      "EnrollmentToken": {
+        "name": "token",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 64
+        }
+      },
+      "ReportType": {
+        "name": "type",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "attendance",
+            "absences",
+            "late-arrivals",
+            "working-hours",
+            "departments",
+            "recognition-accuracy"
+          ]
+        }
+      }
+    },
+    "responses": {
+      "Ok": {
+        "description": "Successful response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Success"
+            }
+          }
+        }
+      },
+      "Created": {
+        "description": "Resource created",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Success"
+            }
+          }
+        }
+      },
+      "Paginated": {
+        "description": "Paginated response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Paginated"
+            }
+          }
+        }
+      },
+      "NoContent": {
+        "description": "Operation completed with no body"
+      },
+      "Unauthorized": {
+        "description": "Authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "message": "Authentication is required.",
+              "code": "UNAUTHENTICATED"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Permission denied",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "message": "You do not have permission to perform this action.",
+              "code": "FORBIDDEN"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Business conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Validation": {
+        "description": "Validation failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "Login": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "example": "admin@attendance.local"
+                },
+                "password": {
+                  "type": "string",
+                  "format": "password",
+                  "example": "Admin123!"
+                },
+                "deviceName": {
+                  "type": "string",
+                  "example": "react-dashboard"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ForgotPassword": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ResetPassword": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "token",
+                "password",
+                "password_confirmation"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "token": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string",
+                  "format": "password"
+                },
+                "password_confirmation": {
+                  "type": "string",
+                  "format": "password"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PasswordChange": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "currentPassword",
+                "password",
+                "password_confirmation"
+              ],
+              "properties": {
+                "currentPassword": {
+                  "type": "string",
+                  "format": "password"
+                },
+                "password": {
+                  "type": "string",
+                  "format": "password",
+                  "minLength": 12
+                },
+                "password_confirmation": {
+                  "type": "string",
+                  "format": "password"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Profile": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Person": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonWrite"
+            }
+          },
+          "multipart/form-data": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonWrite"
+            }
+          }
+        }
+      },
+      "Department": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "code"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string",
+                  "example": "DEP-ENG"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "managerId": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "inactive"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "Schedule": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ScheduleWrite"
+            }
+          }
+        }
+      },
+      "Holiday": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "date"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "departmentId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Attendance": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "personId",
+                "date"
+              ],
+              "properties": {
+                "personId": {
+                  "type": "string",
+                  "example": "EMP-00015"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "checkIn": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "checkOut": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "notes": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AttendanceUpdate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "reason"
+              ],
+              "properties": {
+                "checkInAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "checkOutAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "notes": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 5
+                }
+              }
+            }
+          }
+        }
+      },
+      "Correction": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "requestedValues",
+                "reason"
+              ],
+              "properties": {
+                "requestedValues": {
+                  "type": "object",
+                  "properties": {
+                    "checkInAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "checkOutAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "notes": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 5
+                }
+              }
+            }
+          }
+        }
+      },
+      "Review": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "note": {
+                  "type": "string"
+                },
+                "reviewNote": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Leave": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "personId",
+                "startDate",
+                "endDate",
+                "type",
+                "reason"
+              ],
+              "properties": {
+                "personId": {
+                  "type": "string"
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "endDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Status": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "assignedTo": {
+                  "type": "integer"
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "User": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string",
+                  "format": "password"
+                },
+                "password_confirmation": {
+                  "type": "string",
+                  "format": "password"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "personId": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "twoFactorEnabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Admin": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "email",
+                "password",
+                "password_confirmation",
+                "permissions"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string",
+                  "format": "password",
+                  "minLength": 12
+                },
+                "password_confirmation": {
+                  "type": "string",
+                  "format": "password"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "AdminUpdate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Permissions": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "permissions"
+              ],
+              "properties": {
+                "permissions": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "example": "people.view"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Settings": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "settings"
+              ],
+              "properties": {
+                "settings": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "example": {
+                    "organizationName": "SecurePath Vision",
+                    "gracePeriod": 10,
+                    "confidenceThreshold": 0.85
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "DeviceLogin": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "identifier",
+                "secret"
+              ],
+              "properties": {
+                "identifier": {
+                  "type": "string",
+                  "example": "MOBILE-KIOSK-01"
+                },
+                "secret": {
+                  "type": "string",
+                  "format": "password"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Recognition": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecognitionWrite"
+            }
+          }
+        }
+      },
+      "EnrollmentComplete": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "secureReference",
+                "modelVersion"
+              ],
+              "properties": {
+                "secureReference": {
+                  "type": "string",
+                  "description": "Opaque reference to encrypted private biometric storage"
+                },
+                "modelVersion": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Success": {
+        "type": "object",
+        "required": [
+          "success",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "const": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {}
+        }
+      },
+      "Paginated": {
+        "type": "object",
+        "required": [
+          "success",
+          "data",
+          "pagination"
+        ],
+        "properties": {
+          "success": {
+            "const": true
+          },
+          "data": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "total",
+          "totalPages"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "success",
+          "message",
+          "code"
+        ],
+        "properties": {
+          "success": {
+            "const": false
+          },
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "ValidationError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "USR-002"
+          },
+          "databaseId": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "super_admin",
+              "admin",
+              "user"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PersonWrite": {
+        "type": "object",
+        "properties": {
+          "personCode": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "email"
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "departmentId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "employee",
+              "student",
+              "staff",
+              "contractor"
+            ]
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "suspended"
+            ]
+          },
+          "biometricConsent": {
+            "type": "boolean"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "ScheduleWrite": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "fixed",
+              "shift",
+              "flexible"
+            ]
+          },
+          "startTime": {
+            "type": "string",
+            "example": "08:30"
+          },
+          "endTime": {
+            "type": "string",
+            "example": "17:00"
+          },
+          "gracePeriodMinutes": {
+            "type": "integer"
+          },
+          "breakDurationMinutes": {
+            "type": "integer"
+          },
+          "breakWindow": {
+            "type": "string"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "effectiveUntil": {
+            "type": "string",
+            "format": "date"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "dayOfWeek",
+                "isWorkingDay"
+              ],
+              "properties": {
+                "dayOfWeek": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 7
+                },
+                "isWorkingDay": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "personIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "departmentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RecognitionWrite": {
+        "type": "object",
+        "required": [
+          "eventUuid",
+          "occurredAt",
+          "deviceIdentifier"
+        ],
+        "properties": {
+          "eventUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "personId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "livenessPassed": {
+            "type": "boolean"
+          },
+          "livenessResult": {
+            "type": "string",
+            "enum": [
+              "passed",
+              "failed",
+              "inconclusive",
+              "not_provided"
+            ]
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deviceIdentifier": {
+            "type": "string",
+            "description": "Validated but replaced by authenticated device identity"
+          },
+          "location": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ManualCheckInRequest": {
+        "type": "object",
+        "required": [
+          "personId"
+        ],
+        "properties": {
+          "personId": {
+            "description": "Employee code or internal numeric identifier",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "EMP-00015"
+              },
+              {
+                "type": "integer",
+                "example": 15
+              }
+            ]
+          },
+          "checkInAt": {
+            "example": "2026-08-15T09:03:00+03:00",
+            "description": "Optional custom time. The server time is used when omitted.",
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "note": {
+            "maxLength": 1000,
+            "example": "Employee forgot to use the camera.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "ManualCheckOutRequest": {
+        "type": "object",
+        "required": [
+          "personId"
+        ],
+        "properties": {
+          "personId": {
+            "description": "Employee code or internal numeric identifier",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "EMP-00015"
+              },
+              {
+                "type": "integer",
+                "example": 15
+              }
+            ]
+          },
+          "checkOutAt": {
+            "example": "2026-08-15T18:10:00+03:00",
+            "description": "Optional custom time. The server time is used when omitted.",
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "note": {
+            "maxLength": 1000,
+            "example": "Manual checkout confirmed by the supervisor.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

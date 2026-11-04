@@ -1,0 +1,106 @@
+﻿services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: attendance_system
+      DB_USERNAME: attendance
+      DB_PASSWORD: attendance
+      FACE_AI_SERVICE_URL: http://ai-service:8001
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    volumes:
+      - .:/var/www/html
+      - vendor:/var/www/html/vendor
+    command: sh -c "php artisan migrate --force && cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/up') === false ? 1 : 0);"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  queue:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: attendance_system
+      DB_USERNAME: attendance
+      DB_PASSWORD: attendance
+      FACE_AI_SERVICE_URL: http://ai-service:8001
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    volumes:
+      - .:/var/www/html
+      - vendor:/var/www/html/vendor
+    command: php artisan queue:work --tries=3 --timeout=120
+
+  scheduler:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: attendance_system
+      DB_USERNAME: attendance
+      DB_PASSWORD: attendance
+      FACE_AI_SERVICE_URL: http://ai-service:8001
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    volumes:
+      - .:/var/www/html
+      - vendor:/var/www/html/vendor
+    command: php artisan schedule:work
+
+  ai-service:
+    build: ./ai-service
+    environment:
+      FACE_AI_MODEL_NAME: buffalo_l
+      FACE_AI_EXECUTION_PROVIDER: CPUExecutionProvider
+      FACE_AI_MATCH_THRESHOLD: "0.45"
+      FACE_AI_API_TOKEN: ${FACE_AI_SERVICE_TOKEN:-}
+    volumes:
+      - insightface-models:/root/.insightface
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 180s
+
+  mysql:
+    image: mysql:8.4
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: attendance_system
+      MYSQL_USER: attendance
+      MYSQL_PASSWORD: attendance
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  mysql-data:
+  vendor:
+  insightface-models:
+
+
